@@ -37,8 +37,6 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 </ul>
 `)
 }
-
-
 }
 
 func main() {
