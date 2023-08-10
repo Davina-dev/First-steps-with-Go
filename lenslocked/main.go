@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"path/filepath"
+
 	"log"
 	"net/http"
 
@@ -11,6 +13,7 @@ import (
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+  tplPath := filepath.Join("templates", "home.gohtml")
   tpl, err := template.ParseFiles(tplPath)
   if err != nil {
     log.Printf("parsing template: %v", err)
