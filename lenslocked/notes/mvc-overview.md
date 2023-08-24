@@ -1,59 +1,53 @@
-## Walking Through a Web Request with MVC
+## Model-View-Controller (MVC)
 
-MVC may be easier to understand if we take a normal web request and examine how each part of the request would be handled in a theoretical application. We haven’t written all the pieces of code that we are going to talk about just yet, but seeing how data will flow through our application once we build it should help as we progress with building our application.
+*If you are already familiar with MVC, you can safely skip this chapter.*
 
-We will walk through what happens when a user submits an update to their contact information. For instance, they might be updating their address after moving.
-![ ![Alt text](![image.png](mwc-1to2.png))](mwc-1to2.png)
+Some repeat data from the code organization overview video.
 
-**1. A user submits an update to their contact information**
 
-The first step is pretty straightforward. The user submits their updated contact information to our server by submitting a form. Their browser then sends a web request to our server and our router is pretty much the first thing to interact with the request. Technically other code may run before the router, and we will see this later in the course, but for now we can just assume that all incoming requests are directed to the router as their first step.
+`Model-View-Controller` aka MVC is an architectural pattern for code.
 
-There isn’t really a specific place that routing needs to go in an MVC architecture. It could technically fit into the controllers, but many applications separate routing from the controllers, and I have opted to do the same here.
+Organizes code based on responsibilities. Often called "concerns" (separation of concerns).
 
-**2. The router routes the request to the UserController**
+Developers are still ultimately responsible for putting code into the right location, so differing opinions and mistakes can occur.
 
-When the router receives the web request, it looks at several pieces of information to decide how to proceed. In this case, it likely sees something like a PUT request to the /user endpoint and opts to send the request to some code in the UserController source code. This might be a method Update on a UserController type, or perhaps just an UpdateUser function.
+Three distinct roles of MVC:
 
-```
-// Theoretical code. Don't add it to your project
-package controllers
 
-// Option A: UserController type with an Update method
-type UserController struct {
-  // ...
-}
+**Models** are about data, logic, and rules.
 
-func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-  // ...
-}
+This typically means interacting with your database, but it could also mean interacting with data that comes from other services or APIs.
 
-// Option B: UpdateUser function
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-  // ...
-}
-```
+Often includes validating data, normalizing it, etc.
 
-!![[Alt text](image.png)](mwc-3to4.png)
+For example, our web application is going to have user accounts, and logic for validating passwords and authenticating users will all be in the models package.
 
-**3. The UserController uses the UserStore to update the user’s contact info**
 
-When the incoming web request gets passed along to the user controller code, it will need to do a few things. First, it needs to parse the incoming data. Second, it needs to update the user in the database with the new information provided.
+**Views** render data.
 
-Controllers don’t interact directly with the database, so the user controller uses the UserStore provided by the models package to update the user’s contact information. This allows us to isolate all of our database specific code from our controller code, making both easier to manage.
+In our case, we are rendering HTML.
 
-**4. The UserStore returns the updated data**
+An API could use MVC and the views could be responsible for generating JSON.
 
-After updating the user in the database, the UserStore will return the updated user object to the controller. This sounds complex, but really this is just a function inside the models package returning data after it is called.
+As little logic as possible. Only logic required to render data.
 
-![![!\[Alt text\](image.png)](mwc-1to2.png)](mwc-5to6.png)
+eg:
+- "if next page exists, show next page link" is okay
+- logic to calculate a bunch of graphs should probably be handled elsewhere, and then passed into a view as raw data to render.
 
-**5. The UserController uses the ShowUser view to generate HTML**
+Too much logic in views makes code very hard to maintain.
 
-Once the user has been updated the last thing our controller needs to do is render a response to the user. Controllers don’t create HTML directly, so our code would use something like a ShowUser view to generate an HTML response that shows the newly updated contact information.
+In my apps I also like to have common layouts in my views package. Eg a "theme" with some shared elements, like a navbar.
+Not a requirement of MVC, but not uncommon since it relates to rendering.
 
-Notice that in all of these steps our controller is basically just calling code from the views and models packages. It rarely does any hard work on its own and instead acts more like a coordinator.
 
-**6. The ShowUser view writes and HTML response to the user**
+**Controllers** connects it all.
 
-After the user controller uses the ShowUser view, HTML will be returned in a response to the web request. This will likely be something like their contact information page with the updated information and perhaps a message saying something like, “Your information has been updated!”
+It won't directly render HTML, it won't directly touch the DB, but it will call code from the models and views packages to do these things.
+
+You can think of controllers as your [air traffic controllers](https://en.wikipedia.org/wiki/Air_traffic_control). Air traffic controllers are the people that inform each plane at an airport where to fly, when to land, and on which runway to land. They don't actually do any piloting, but instead are in charge of telling everyone what to do so that an airport can operate smoothly.
+
+Similarly, your controller shouldn't have too much logic in it, but will instead pass data around to different pieces of your application that actually handle performing whatever work needs done.
+
+
+We will start placing pretty much all of our code in these packages, but long term it might make sense to use MVC with other packages as well.
