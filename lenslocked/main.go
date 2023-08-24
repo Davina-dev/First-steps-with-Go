@@ -19,7 +19,7 @@ func executeTemplate(w http.ResponseWriter, filepath string) {
 		http.Error(w, "There was an error processing the template.", http.StatusInternalServerError)
 		return
 	}
-	err = tpl.Execute(w, nil)
+	err = tpl.Execute(w,nil)
 	if err != nil {
 		log.Printf("executing template: %v", err)
 		http.Error(w, "There was an error executing the template.", http.StatusInternalServerError)
@@ -36,30 +36,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func contactHandler(w http.ResponseWriter, r *http.Request) {
   tplPath := filepath.Join("templates", "home.gohtml")
   executeTemplate(w, tplPath)
-  fmt.Fprint(w, "<h1>Contact Page</h1><p>To get in contact, go to  <a href=\"https://www.linkedin.com/in/davinamedina/\">Davina's linkedin</a>.</p>")
 }
 
 func faqHandler(w http.ResponseWriter, r *http.Request) {
   tplPath := filepath.Join("templates", "home.gohtml")
   executeTemplate(w, tplPath)
-  
-  fmt.Fprint(w, `<h1>FAQ Page</h1>
-<ul>
-  <li>
-    <b>Is there a free version?</b>
-    Yes! We offer a free trial for 30 days on any paid plans.
-  </li>
-  <li>
-    <b>What are your support hours?</b>
-    We have support staff answering emails 24/7, though response
-    times may be a bit slower on weekends.
-  </li>
-  <li>
-    <b>How do I contact support?</b>
-    Email us - <a href="mailto:support@lenslocked.com">support@lenslocked.com</a>
-  </li>
-</ul>
-`)
 }
 
 func main() {
