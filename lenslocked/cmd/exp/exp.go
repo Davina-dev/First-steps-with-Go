@@ -6,7 +6,7 @@ type User struct {
 
 
 user := User{
-  Name: "Jon Calhoun",
+  Name: "Davina",
   Bio:  `<script>alert("Haha, you have been h4x0r3d!");</script>`,
   Age:  123,
 }
