@@ -20,10 +20,10 @@ func main() {
 	views.Must(views.ParseFS(template.FS, "home.gohtml" ))))
   r.Get("/contact", controllers.StaticHandler(
 	views.Must(views.ParseFS(template.FS, "contact.gohtml"))))
-  r.Get("/faq", controllers.StaticHandler(
+  r.Get("/faq", controllers.FAQ(
 	views.Must(views.ParseFS(template.FS, "faq.gohtml"))))
 
-  r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+  r.NotFound(func(w http.ResponseWriter, _ *http.Request) {
     http.Error(w, "Page not found", http.StatusNotFound)
   })
   fmt.Println("Starting the server on :3000...")
